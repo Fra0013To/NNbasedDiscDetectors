@@ -9,7 +9,7 @@ print("Switched to:", matplotlib.get_backend())
 
 
 def test_discontinuous(X):
-    y = np.cos(np.arctan2(X[:, 0], X[:, 1]).flatten())
+    y = np.cos(np.arctan2(X[:, 0] + 0.31, X[:, 1] + 0.43).flatten())
 
     return y
 
