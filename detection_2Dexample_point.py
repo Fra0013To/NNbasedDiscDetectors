@@ -35,11 +35,11 @@ while detect.sg_to_visit['edgelens'].size > 0:
     detect.one_step_detection(verbose=True)
 
     plt.figure()
-    plt.contourf(X, Y, Z, cmap='gray')
+    plt.contourf(X, Y, Z, cmap='gray', levels=100)
     plt.scatter(detect.sg_visited['origins'][:, 0], detect.sg_visited['origins'][:, 1], marker='x', c='cyan',
-                label='origins (visited)')
+                label='SG-origins (visited)')
     plt.scatter(detect.sg_to_visit['origins'][:, 0], detect.sg_to_visit['origins'][:, 1], marker='o', c='yellow',
-                label='next origins to be visited')
+                label='next SG-origins to be visited')
     plt.scatter(detect.troubled_pts[:, 0], detect.troubled_pts[:, 1], marker='d', c='magenta',
                 label='final troubled points')
     plt.legend()
