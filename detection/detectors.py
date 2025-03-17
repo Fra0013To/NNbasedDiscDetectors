@@ -146,4 +146,22 @@ for p in itertools.product([-0.75, -0.25, 0.25, 0.75], [-0.75, -0.25, 0.25, 0.75
     starting_origins_v02 = np.vstack([starting_origins_v02, np.array(p, ndmin=2)])
     starting_edgelens_v02.append(0.5)
 
+starting_origins_v03 = starting_origins_v02.copy()
+starting_edgelens_v03 = starting_edgelens_v02.copy()
+for p in itertools.product([-0.875, -0.625, -0.375, -0.125, 0.125, 0.375, 0.625, 0.875],
+                           [-0.875, -0.625, -0.375, -0.125, 0.125, 0.375, 0.625, 0.875]
+                           ):
+    starting_origins_v03 = np.vstack([starting_origins_v03, np.array(p, ndmin=2)])
+    starting_edgelens_v03.append(0.25)
+
+starting_origins_v04 = starting_origins_v03.copy()
+starting_edgelens_v04 = starting_edgelens_v03.copy()
+for p in itertools.product([-0.9375, -0.8125, -0.6875, -0.5625, -0.4375, -0.3125, -0.1875, -0.0625,
+                            0.0625, 0.1875, 0.3125, 0.4375, 0.5625, 0.6875, 0.8125, 0.9375],
+                           [-0.9375, -0.8125, -0.6875, -0.5625, -0.4375, -0.3125, -0.1875, -0.0625,
+                            0.0625, 0.1875, 0.3125, 0.4375, 0.5625, 0.6875, 0.8125, 0.9375],
+                           ):
+    starting_origins_v04 = np.vstack([starting_origins_v04, np.array(p, ndmin=2)])
+    starting_edgelens_v04.append(0.125)
+
 

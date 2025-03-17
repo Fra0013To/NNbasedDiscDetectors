@@ -33,7 +33,7 @@ XX = np.hstack([np.expand_dims(X.flatten(), axis=1), np.expand_dims(Y.flatten(),
 Z = test_discontinuous(XX).reshape(X.shape)
 
 detect.initialize_detection(starting_sg_origins=starting_sg_origins, starting_sg_edgelens=starting_sg_edgelens,
-                            lambda_min=1e-3, detection_threshold=0.5
+                            lambda_min=2**(-5), detection_threshold=0.5
                             )
 
 while detect.sg_to_visit['edgelens'].size > 0:
