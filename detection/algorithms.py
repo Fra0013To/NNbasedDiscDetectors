@@ -47,7 +47,7 @@ class DiscontinuityDetection:
         return clip_reldim[indices]
 
     def initialize_detection(self, starting_sg_origins, starting_sg_edgelens,
-                             lambda_min=1e-2, detection_threshold=0.5
+                             lambda_min=(2 ** (-5)), detection_threshold=0.5
                              ):
         """
         Method that set the starting SGs for the detection algorithm, similar to the one stored in self.detector.sgg
@@ -70,6 +70,22 @@ class DiscontinuityDetection:
                             'edgelens': self.__edgelens_clipper(starting_sg_edgelens)
                             }
         self.detection_threshold = detection_threshold
+
+    def _aposteriori_count_func_evaluations(self, verbose=False):
+        if verbose:
+            print('')
+            print(f'@@@@@@@@@@@@@@@ NUMBER OF VISITED SGs: {self.sg_visited["origins"].shape[0]} @@@@@@@@@@@@@@@')
+
+        SGs = self.detector._place_sg(self.sg_visited['origins'], self.sg_visited['edgelens'])
+        M, N, n = SGs.shape
+
+        SGs_uniques = SGs.reshape((M * N, n))
+        SGs_uniques = np.unique(SGs_uniques, axis=0)
+
+        funceval_count = M * N
+        unique_funceval_count = SGs_uniques.shape[0]
+
+        return funceval_count, unique_funceval_count
 
     def one_step_detection(self, verbose=False):
         if verbose:
@@ -106,14 +122,20 @@ class DiscontinuityDetection:
 
         # REMOVE DUPLICATES AND ALREADY VISITED FROM THE (origin, edgelen) TO BE VISITED IN THE NEXT STEP
         true_to_visit_inds = []
+        already_visited_count = 0
         all_new = np.unique(np.hstack([new_origins, np.expand_dims(new_edgelens, axis=1)]), axis=0)
         all_visited = np.hstack([self.sg_visited['origins'], np.expand_dims(self.sg_visited['edgelens'], axis=1)])
         if verbose:
             print(f'*** CHECKING FOR ALREADY-VISITED SGs (REMOVED FROM THE "TO VISIT" LIST)')
 
         for ii in range(all_new.shape[0]):
-            if all_new[ii, :] in all_visited:
+            if np.linalg.norm(all_new[ii:ii + 1, :] - all_visited, axis=1).min() > 0:  # I.E.: all_new[ii, :] not in all_visited
                 true_to_visit_inds.append(ii)
+            else:
+                already_visited_count += 1
+
+        if verbose:
+            print(f'########### FOUND {already_visited_count} ALREADY-VISITED SGs #############')
 
         self.sg_to_visit['origins'] = all_new[true_to_visit_inds, :2]
         self.sg_to_visit['edgelens'] = all_new[true_to_visit_inds, 2]

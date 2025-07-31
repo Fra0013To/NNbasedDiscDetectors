@@ -28,28 +28,15 @@ class DiscontinuityDetector:
         new_edgelens = np.concatenate([new_edgelens_copy for i in range(n)], axis=-1)
 
         # PREPARE THE M SGs (SHAPE (M, N, n))
-        SGs = np.vstack([np.expand_dims(self.sgg['grid_pts'].copy(), axis=0) for m in range(M)])
+        # OLD VERSION:
+        # SGs = np.vstack([np.expand_dims(self.sgg['grid_pts'].copy(), axis=0) for m in range(M)])
+        # NEW VERSION (MORE EFFICIENT):
+        SGs = np.repeat(np.expand_dims(self.sgg['grid_pts'].copy(), axis=0), M, axis=0)
         SGs = (SGs / 2) * new_edgelens
 
         SGs = SGs + np.expand_dims(new_origins, axis=1)  # ADD RESHAPED new_origins (NEW SHAPE (M, 1, n))
 
         return SGs
-
-    def _place_sg_and_eval_func(self, new_origins, new_edgelens, eval_function):
-        """
-        Method that evaluate a target function at the points of SGs similar to the one stored in self.sgg
-        :param new_origins: M-by-n array of the origins of the M n-dimensional SGs
-        :param new_edgelens: 1D-array of M elements, representing the edge-length of the M SGs
-        :param eval_function: function to be used for the evaluation. We assume to have a function that takes as input
-            a K-by-n array of K n-dimensional pts, and that returns an array of K function evaluation at those pts.
-        :return: M-by-N array of the function evaluations for each one of the N pts of each one of the M SGs
-        """
-
-        SGs = self._place_sg(new_origins, new_edgelens)
-        M, N, n = SGs.shape
-        Y = eval_function(SGs.reshape((M * N, n))).reshape((M, N))
-
-        return Y
 
     @staticmethod
     def _eval_func_at_placedsg(SGs, eval_function):
@@ -63,6 +50,26 @@ class DiscontinuityDetector:
 
         M, N, n = SGs.shape
         Y = eval_function(SGs.reshape((M * N, n))).reshape((M, N))
+
+        return Y
+
+    def _place_sg_and_eval_func(self, new_origins, new_edgelens, eval_function):
+        """
+        Method that evaluate a target function at the points of SGs similar to the one stored in self.sgg
+        :param new_origins: M-by-n array of the origins of the M n-dimensional SGs
+        :param new_edgelens: 1D-array of M elements, representing the edge-length of the M SGs
+        :param eval_function: function to be used for the evaluation. We assume to have a function that takes as input
+            a K-by-n array of K n-dimensional pts, and that returns an array of K function evaluation at those pts.
+        :return: M-by-N array of the function evaluations for each one of the N pts of each one of the M SGs
+        """
+
+        SGs = self._place_sg(new_origins, new_edgelens)
+
+        # OLD VERSION:
+        # M, N, n = SGs.shape
+        # Y = eval_function(SGs.reshape((M * N, n))).reshape((M, N))
+        # NEW VERSION:
+        Y = self._eval_func_at_placedsg(SGs, eval_function)
 
         return Y
 
