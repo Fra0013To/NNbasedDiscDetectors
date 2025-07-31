@@ -6,6 +6,7 @@ Meanwhile, the _detection_2Dexample_line.py_ and _detection_2Dexample_point.py_ 
 Algorithm 2 illustrated in the paper.
 
 ## Updates and Versions
+- v0.2 (2025.07.31): Code optimization and implementation of cost evaluations.
 - v0.1 (2025.02.28): Available trained detectors for 2D and 4D. Examples in 2D.
 - v0.0 (2024.01.25): Repository creation.
 
